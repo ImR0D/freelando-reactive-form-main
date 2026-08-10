@@ -4,11 +4,81 @@
       <h2 class="cadastro-form__title">Crie seu cadastro</h2>
 
       <p class="cadastro-form__description">
-        Crie seu perfil gratuitamente para começar a trabalhar com os melhores freelancers.
-        Em seguida, você poderá dar mais detalhes sobre suas demandas e sobre sua forma de trabalho.
+        Crie seu perfil gratuitamente para começar a trabalhar com os melhores
+        freelancers. Em seguida, você poderá dar mais detalhes sobre suas
+        demandas e sobre sua forma de trabalho.
       </p>
 
       <form [formGroup]="dadosPessoaisForm" (ngSubmit)="onProximo()">
+        <div class="cadastro_form__field">
+          <label for="nomeCompleto" class="cadastro-form__label"
+            >Nome Completo</label
+          ><input
+            type="text"
+            id="nomeCompleto"
+            class="cadastro-form__input"
+            formControlName="nomeCompleto"
+          />
+          <div
+            *ngIf="
+              dadosPessoaisForm.get('nomeCompleto')?.invalid &&
+              dadosPessoaisForm.get('nomeCompleto')?.touched
+            "
+            class="cadastro-form__error"
+          >
+            Nome completo é obrigatório
+          </div>
+
+          <div class="cadastro-form__row">
+            <div class="cadastro-form__field">
+              <label for="estado" class="cadastro-form__label">Estado</label>
+              <select
+                name=""
+                id="estado"
+                class="cadastro-form__input"
+                formControlName="estado"
+              >
+                <option value="" disabled selected>Selecione</option>
+                <option *ngFor="let estado of estados" [value]="estado.sigla">
+                  {{ estado.nome + " (" + estado.sigla + ")" }}
+                </option>
+              </select>
+              <div
+                *ngIf="
+                  dadosPessoaisForm.get('estado')?.invalid &&
+                  dadosPessoaisForm.get('estado')?.touched
+                "
+                class="cadastro-form__error"
+              >
+                Estado é obrigatório
+              </div>
+
+              <div class="cadastro-form__field">
+                <label for="cidade" class="cadastro-form__label">Cidade</label>
+                <select
+                  name=""
+                  id="cidade"
+                  class="cadastro-form__input"
+                  formControlName="cidade"
+                >
+                  <option value="" disabled selected>Selecione</option>
+                  <option *ngFor="let cidade of cidades" [value]="cidade.nome">
+                    {{ cidade.nome }}
+                  </option>
+                </select>
+                <div
+                  *ngIf="
+                    dadosPessoaisForm.get('cidade')?.invalid &&
+                    dadosPessoaisForm.get('cidade')?.touched
+                  "
+                  class="cadastro-form__error"
+                >
+                  Cidade é obrigatório
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
 
         <div class="cadastro-form__actions">
           <app-button
@@ -16,7 +86,8 @@
             type="outline"
             icon="fas fa-arrow-left"
             iconPosition="left"
-            (clicked)="onAnterior()">
+            (clicked)="onAnterior()"
+          >
           </app-button>
 
           <app-button
@@ -25,7 +96,8 @@
             icon="fas fa-arrow-right"
             iconPosition="right"
             [disabled]="dadosPessoaisForm.invalid"
-            (clicked)="onProximo()">
+            (clicked)="onProximo()"
+          >
           </app-button>
         </div>
       </form>
