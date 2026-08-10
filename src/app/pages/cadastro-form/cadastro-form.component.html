@@ -5,7 +5,6 @@
       <form [formGroup]="cadastroForm" (ngSubmit)="onNext()">
         <div class="cadastro-form_section">
           <h3 class="cadastro-form__section-title">Qual a área de atuação?</h3>
-
           <div class="cadastro-form__radio-group">
             <app-radio-option
               *ngFor="let area of areasAtuacao"
