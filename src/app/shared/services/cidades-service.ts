@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { map, Observable, shareReplay } from 'rxjs';
+import { map, Observable, retry, shareReplay } from 'rxjs';
 
 export interface Cidade {
   id: number;
@@ -40,12 +40,12 @@ export class CidadesService {
     if (!this.cachedMunicipiosGeral) {
       const url = `${this.baseURL}municipios`;
 
-      this.cachedMunicipiosGeral = this.http.get<Cidade[]>(url).pipe(
-        map((municipios) =>
-          [...municipios].sort((a, b) => a.nome.localeCompare(b.nome)),
-        ),
-        shareReplay(1), // Salva o resultado e compartilha entre todos que chamarem este método
-      );
+      this.cachedMunicipiosGeral = this.http
+        .get<Cidade[]>(`${url}?orderBy=nome`)
+        .pipe(
+          retry(3),
+          shareReplay(1), // Salva o resultado e compartilha entre todos que chamarem este método
+        );
     }
 
     return this.cachedMunicipiosGeral;
@@ -61,12 +61,9 @@ export class CidadesService {
     if (!this.cachedMunicipiosPorUF.has(ufNormalizada)) {
       const url = `${this.baseURL}estados/${ufNormalizada}/municipios`;
 
-      const requisicao = this.http.get<Cidade[]>(url).pipe(
-        map((municipios) =>
-          [...municipios].sort((a, b) => a.nome.localeCompare(b.nome)),
-        ),
-        shareReplay(1),
-      );
+      const requisicao = this.http
+        .get<Cidade[]>(`${url}?orderBy=nome`)
+        .pipe(retry(3), shareReplay(1));
 
       this.cachedMunicipiosPorUF.set(ufNormalizada, requisicao);
     }
@@ -85,10 +82,9 @@ export class CidadesService {
     }
 
     const url = `${this.baseURL}municipios/${municipioId}`;
-    return this.http
-      .get<Cidade>(url)
-      .pipe(
-        map((cidade) => cidade?.microrregiao?.mesorregiao?.UF?.sigla ?? null),
-      );
+    return this.http.get<Cidade>(url).pipe(
+      retry(3),
+      map((cidade) => cidade?.microrregiao?.mesorregiao?.UF?.sigla ?? null),
+    );
   }
 }

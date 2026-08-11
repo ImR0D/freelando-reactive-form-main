@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { from, map, Observable } from 'rxjs';
+import { from, map, Observable, retry } from 'rxjs';
 
 export interface Estado {
   id: number;
@@ -23,13 +23,7 @@ export class EstadosService {
 
   getEstados(): Observable<Estado[]> {
     return from(
-      this.http
-        .get<Estado[]>(this.URL)
-        .pipe(
-          map((estados: Estado[]) =>
-            [...estados].sort((a, b) => a.nome.localeCompare(b.nome)),
-          ),
-        ),
+      this.http.get<Estado[]>(`${this.URL}?orderBy=nome`).pipe(retry(3)),
     );
   }
 }
