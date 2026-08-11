@@ -25,6 +25,13 @@ export const equalPasswordsValidator: ValidatorFn = (
 
   const hasPasswords = senha && confirmaSenha;
   const isPasswordMatches = senha?.value === confirmaSenha?.value;
+  const hasPasswordsEnoughLength =
+    String(senha?.value).length >= 6 &&
+    String(confirmaSenha?.value).length >= 6;
+
+  if (!hasPasswordsEnoughLength) {
+    return { passwordFieldsLength: true };
+  }
 
   return hasPasswords && isPasswordMatches
     ? null

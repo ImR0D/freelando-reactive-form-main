@@ -182,6 +182,15 @@
               >
                 As senhas informadas não correspondem
               </span>
+              <span
+                *ngIf="
+                  dadosPessoaisForm.hasError('passwordFieldsLength') &&
+                  dadosPessoaisForm.get('senha')?.touched &&
+                  dadosPessoaisForm.get('confirmarSenha')?.touched
+                "
+              >
+                As senhas não possuem tamanho mínimo suficiente de 6 caracteres
+              </span>
             </div>
           </div>
         </div>
