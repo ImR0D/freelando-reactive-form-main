@@ -1,9 +1,13 @@
 import { Component, effect, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
+  AbstractControl,
+  AbstractControlOptions,
   FormBuilder,
   FormGroup,
   ReactiveFormsModule,
+  ValidationErrors,
+  ValidatorFn,
   Validators,
 } from '@angular/forms';
 import { ButtonComponent } from '../../shared/components/button/button.component';
@@ -12,6 +16,20 @@ import { Router } from '@angular/router';
 import { Estado, EstadosService } from '../../shared/services/estados-service';
 import { Cidade, CidadesService } from '../../shared/services/cidades-service';
 import { toSignal } from '@angular/core/rxjs-interop';
+
+export const equalPasswordsValidator: ValidatorFn = (
+  control: AbstractControl,
+): ValidationErrors | null => {
+  const senha = control.get('senha');
+  const confirmaSenha = control.get('confirmarSenha');
+
+  const hasPasswords = senha && confirmaSenha;
+  const isPasswordMatches = senha?.value === confirmaSenha?.value;
+
+  return hasPasswords && isPasswordMatches
+    ? null
+    : { passwordFieldsMissmatch: true };
+};
 
 @Component({
   selector: 'app-dados-pessoais-form',
@@ -30,14 +48,21 @@ export class DadosPessoaisFormComponent {
   estados: Estado[] = [];
   cidades: Cidade[] = [];
 
-  public dadosPessoaisForm: FormGroup = this.formBuilder.group({
-    nomeCompleto: ['', Validators.required],
-    estado: ['', Validators.required],
-    cidade: ['', Validators.required],
-    email: ['', [Validators.required, Validators.email]],
-    senha: ['', [Validators.required, Validators.minLength(6)]],
-    confirmarSenha: ['', Validators.required],
-  });
+  private formOptions: AbstractControlOptions = {
+    validators: equalPasswordsValidator,
+  };
+
+  public dadosPessoaisForm: FormGroup = this.formBuilder.group(
+    {
+      nomeCompleto: ['', Validators.required],
+      estado: ['', Validators.required],
+      cidade: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
+      senha: ['', [Validators.required, Validators.minLength(6)]],
+      confirmarSenha: ['', Validators.required],
+    },
+    this.formOptions,
+  );
 
   private estadoSelecionado = toSignal(
     this.dadosPessoaisForm.get('estado')!.valueChanges,
@@ -60,10 +85,12 @@ export class DadosPessoaisFormComponent {
   constructor() {
     this.loadEstados();
     this.loadMunicipios();
+
     effect(() => {
       let UF = this.estadoSelecionado() ?? null;
       this.loadMunicipios(UF);
     });
+
     effect(() => {
       const nomeCidade = this.cidadeSelecionada();
       const selecteddUF = this.estadoSelecionado();

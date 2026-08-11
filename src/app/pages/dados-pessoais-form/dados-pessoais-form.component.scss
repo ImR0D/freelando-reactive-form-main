@@ -1,3 +1,4 @@
+$max-container-size: 600px;
 
 .cadastro-form {
   display: flex;
@@ -6,7 +7,7 @@
 
   &__container {
     width: 100%;
-    max-width: 600px;
+    max-width: calc($max-container-size);
   }
 
   &__card {
@@ -32,16 +33,17 @@
   }
 
   &__field {
-    margin-bottom: 1.5rem;
-
-    &--half {
-      width: 46%;
-    }
+    display: flex;
+    flex-direction: column;
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
   }
 
   &__row {
     display: flex;
+    flex-direction: row;
     justify-content: space-between;
+    gap: 1em;
   }
 
   &__label {
@@ -51,12 +53,13 @@
     font-size: 0.9rem;
   }
 
-  &__input, &__select {
-    width: 100%;
+  &__input,
+  &__select {
     padding: 0.75rem;
     border: 1px solid #ddd;
     border-radius: 4px;
     font-size: 1rem;
+    width: 100%;
 
     &:focus {
       outline: none;
@@ -66,6 +69,8 @@
   }
 
   &__error {
+    display: flex;
+    flex-direction: column;
     color: #e53e3e;
     font-size: 0.8rem;
     margin-top: 0.25rem;
