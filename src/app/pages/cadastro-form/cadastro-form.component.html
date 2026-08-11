@@ -2,7 +2,7 @@
   <div class="cadastro-form__container">
     <div class="cadastro-form__card">
       <h2 class="cadastro-form__title">Crie seu cadastro</h2>
-      <form [formGroup]="cadastroForm" (ngSubmit)="onNext()">
+      <form [formGroup]="cadastroForm" (ngSubmit)="onProximo()">
         <div class="cadastro-form_section">
           <h3 class="cadastro-form__section-title">Qual a área de atuação?</h3>
           <div class="cadastro-form__radio-group">
@@ -51,7 +51,7 @@
             type="outline"
             icon="fas fa-arrow-left"
             iconPosition="left"
-            (clicked)="onPrevious()"
+            (clicked)="onAnterior()"
           ></app-button>
           <app-button
             text="Próximo"
@@ -59,7 +59,7 @@
             icon="fas fa-arrow-left"
             iconPosition="right"
             [disabled]="cadastroForm.invalid"
-            (clicked)="onNext()"
+            (clicked)="onProximo()"
           ></app-button>
         </div>
       </form>

@@ -69,11 +69,11 @@ export class CadastroFormComponent implements OnInit {
     });
   }
 
-  onPrevious() {
+  onAnterior() {
     console.log('Voltar para a etapa anterior');
   }
 
-  onNext() {
+  onProximo() {
     if (this.cadastroForm.valid) {
       this.cadastroService.updateCadastroData({
         areaAtuacao: this.cadastroForm.get('areaAtuacao')?.value,
