@@ -2,9 +2,60 @@
   <div class="cadastro-form__container">
     <div class="cadastro-form__card">
       <h2 class="cadastro-form__title">Crie seu cadastro</h2>
-      <p class="cadastro-form__subtitle">Melhore sua descrição para atrair clientes!</p>
+      <p class="cadastro-form__subtitle">
+        Melhore sua descrição para atrair clientes!
+      </p>
 
       <form [formGroup]="perfilForm" (ngSubmit)="onProximo()">
+        <div class="cadastro-form__field">
+          <label class="cadastro-form__label">Sua Foto</label>
+          <div class="cadastro-form__upload-container">
+            <div
+              class="cadastro-form__upload-area"
+              [class.cadastro-form__upload-area--with-preview]="fotoPreview"
+              (click)="fileInput.click()"
+            >
+              <ng-container *ngIf="!fotoPreview">
+                <div>
+                  <i class="fas fa-cloud-upload-alt"></i>
+                  <p>Clique aqui para fazer o upload da imagem</p>
+                </div>
+              </ng-container>
+              <ng-container *ngIf="fotoPreview">
+                <img
+                  [src]="fotoPreview"
+                  alt="Preview da foto"
+                  class="cadastro-form__foto-preview"
+                />
+              </ng-container>
+            </div>
+            <input
+              #fileInput
+              type="file"
+              accept="image/*"
+              style="display: none"
+              (change)="onFotoSelecionada($event)"
+            />
+          </div>
+        </div>
+
+        <div class="cadastro-form__field">
+          <label for="" class="cadastro-form__label"
+            >Cite até 3 habilidades que você considera principais</label
+          >
+          <div class="cadastro-form__chips">
+            <app-chip
+              *ngFor="let habilidade of habilidades"
+              [text]="habilidade.nome"
+              [selected]="habilidade.selecionada"
+              [disabled]="
+                !habilidade.selecionada &&
+                perfilForm.get('habilidadesSelecionadas')?.value.length >= 4
+              "
+              (clicked)="toggleHabilidade(habilidade)"
+            />
+          </div>
+        </div>
 
         <div class="cadastro-form__actions">
           <app-button
@@ -12,7 +63,8 @@
             type="outline"
             icon="fas fa-arrow-left"
             iconPosition="left"
-            (clicked)="onAnterior()">
+            (clicked)="onAnterior()"
+          >
           </app-button>
 
           <app-button
@@ -21,7 +73,8 @@
             icon="fas fa-arrow-right"
             iconPosition="right"
             [disabled]="perfilForm.invalid"
-            (clicked)="onProximo()">
+            (clicked)="onProximo()"
+          >
           </app-button>
         </div>
       </form>
