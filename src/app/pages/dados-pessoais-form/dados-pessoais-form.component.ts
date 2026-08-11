@@ -138,7 +138,7 @@ export class DadosPessoaisFormComponent {
     }
 
     this.salvarDadosAtuais();
-    this.router.navigate(['/cadastro/confirmacao']);
+    this.router.navigate(['/cadastro/perfil']);
   }
 
   loadEstados() {
