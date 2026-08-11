@@ -16,6 +16,7 @@ import { Router } from '@angular/router';
 import { Estado, EstadosService } from '../../shared/services/estados-service';
 import { Cidade, CidadesService } from '../../shared/services/cidades-service';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { cpfValidator } from '../../shared/validators/cpf.validator';
 
 export const equalPasswordsValidator: ValidatorFn = (
   control: AbstractControl,
@@ -62,6 +63,7 @@ export class DadosPessoaisFormComponent {
   public dadosPessoaisForm: FormGroup = this.formBuilder.group(
     {
       nomeCompleto: ['', Validators.required],
+      cpf: ['', [Validators.maxLength(14), Validators.required, cpfValidator]],
       estado: ['', Validators.required],
       cidade: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],

@@ -29,7 +29,36 @@
             "
             class="cadastro-form__error"
           >
-            Nome completo é obrigatório
+            Nome completo obrigatório
+          </div>
+        </div>
+
+        <!-- =============================== -->
+        <!-- Campo: CPF -->
+        <!-- =============================== -->
+        <div class="cadastro-form__field">
+          <label for="cpf" class="cadastro-form__label">CPF</label
+          ><input
+            type="text"
+            id="cpf"
+            class="cadastro-form__input"
+            formControlName="cpf"
+            placeholder="XXX.XXX.XXX-XX"
+            maxlength="14"
+          />
+          <div
+            *ngIf="
+              dadosPessoaisForm.get('cpf')?.invalid &&
+              dadosPessoaisForm.get('cpf')?.touched
+            "
+            class="cadastro-form__error"
+          >
+            <span *ngIf="dadosPessoaisForm.get('cpf')?.errors?.['required']"
+              >CPF obrigatório</span
+            >
+            <span *ngIf="dadosPessoaisForm.get('cpf')?.errors?.['cpfInvalido']"
+              >CPF inválido</span
+            >
           </div>
         </div>
 
@@ -58,7 +87,7 @@
               "
               class="cadastro-form__error"
             >
-              Estado é obrigatório
+              Estado obrigatório
             </div>
           </div>
 
@@ -85,7 +114,7 @@
               "
               class="cadastro-form__error"
             >
-              Cidade é obrigatório
+              Cidade obrigatório
             </div>
           </div>
         </div>
@@ -175,7 +204,7 @@
                   dadosPessoaisForm.get('senha')?.value
                 "
               >
-                Confirmação de senha é obrigatória
+                Confirmação de senha obrigatório
               </span>
               <span
                 *ngIf="dadosPessoaisForm.hasError('passwordFieldsMissmatch')"
