@@ -17,6 +17,8 @@ import { Estado, EstadosService } from '../../shared/services/estados-service';
 import { Cidade, CidadesService } from '../../shared/services/cidades-service';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { cpfValidator } from '../../shared/validators/cpf.validator';
+import { emailExistenteValidator } from '../../shared/validators/emailExistente.validator';
+import { EmailValidatorService } from '../../shared/services/email-validator.service';
 
 export const equalPasswordsValidator: ValidatorFn = (
   control: AbstractControl,
@@ -52,6 +54,7 @@ export class DadosPessoaisFormComponent {
   private estadosService = inject(EstadosService);
   private cidadesService = inject(CidadesService);
   private cadastroService = inject(CadastroService);
+  private emailService = inject(EmailValidatorService);
 
   estados: Estado[] = [];
   cidades: Cidade[] = [];
@@ -66,7 +69,11 @@ export class DadosPessoaisFormComponent {
       cpf: ['', [Validators.maxLength(14), Validators.required, cpfValidator]],
       estado: ['', Validators.required],
       cidade: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
+      email: [
+        '',
+        [Validators.required, Validators.email],
+        [emailExistenteValidator(this.emailService)],
+      ],
       senha: ['', [Validators.required, Validators.minLength(6)]],
       confirmarSenha: ['', Validators.required],
     },
