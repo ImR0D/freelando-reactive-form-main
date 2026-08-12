@@ -2,9 +2,20 @@
   class="button"
   [ngClass]="['button--' + type, disabled ? 'button--disabled' : '']"
   [disabled]="disabled"
-  (click)="onClick()">
-
-  <i *ngIf="icon && iconPosition === 'left'" class="button__icon button__icon--left" [class]="icon"></i>
+  (click)="onClick()"
+>
+  <i
+    *ngIf="icon && iconPosition === 'left'"
+    class="button__icon button__icon--left"
+    [class]="icon"
+  >
+    <ng-icon size="15px" name="phosphorArrowLeftBold" />
+  </i>
   <span class="button__text">{{ text }}</span>
-  <i *ngIf="icon && iconPosition === 'right'" class="button__icon button__icon--right" [class]="icon"></i>
+  <i
+    *ngIf="icon && iconPosition === 'right'"
+    class="button__icon button__icon--right"
+    [class]="icon"
+    ><ng-icon size="15px" name="phosphorArrowRightBold"
+  /></i>
 </button>

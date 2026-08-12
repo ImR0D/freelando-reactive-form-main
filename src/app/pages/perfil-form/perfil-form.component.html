@@ -40,6 +40,39 @@
         </div>
 
         <div class="cadastro-form__field">
+          <label for="resumo" class="cadastro-form__label">Resumo</label>
+          <textarea
+            id="resumo"
+            class="cadastro-form__textarea"
+            formControlName="resumo"
+            maxlength="70"
+            rows="3"
+          ></textarea>
+
+          <div class="cadastro-form__field-info">
+            <span>Faça um resumo em até 70 caracteres</span>
+            <span>{{ caracteresRestantes }}</span>
+          </div>
+
+          <span
+            class="cadastro-form__error"
+            *ngIf="
+              perfilForm.get('resumo')?.invalid &&
+              perfilForm.get('resumo')?.touched
+            "
+          >
+            <span *ngIf="perfilForm.get('resumo')?.errors?.['required']">
+              Resumo é obrigatório
+            </span>
+            <span *ngIf="perfilForm.get('resumo')?.errors?.['maxlength']">
+              Resumo deve ter no máximo 70 caracteres
+            </span>
+          </span>
+        </div>
+
+        <div class="cadastro-form__divider"></div>
+
+        <div class="cadastro-form__field">
           <label for="" class="cadastro-form__label"
             >Cite até 3 habilidades que você considera principais</label
           >
@@ -56,6 +89,8 @@
             />
           </div>
         </div>
+
+        <div class="cadastro-form__divider"></div>
 
         <div class="cadastro-form__field">
           <div class="cadastro-form__row cadastro-form__row--header">
@@ -115,7 +150,9 @@
                   type="button"
                   (click)="removerIdioma(i)"
                   *ngIf="i > 0 || idiomaForm.get('nome')?.value !== 'Português'"
-                ></button>
+                >
+                  <ng-icon name="phosphorTrashBold" />
+                </button>
               </div>
             </div>
           </ng-container>
@@ -126,9 +163,49 @@
               type="button"
               (click)="adicionarIdioma()"
             >
-              <i class="fas fa-plus-circle"></i>
+              <ng-icon name="phosphorPlusCircleBold" />
               Adicionar idiomas
             </button>
+          </div>
+        </div>
+
+        <div class="cadastro-form__divider"></div>
+
+        <div class="cadastro-form__field">
+          <label for="portfolio" class="cadastro-form__label">Portfolio</label
+          ><input
+            type="url"
+            id="portfolio"
+            class="cadastro-form__input"
+            formControlName="portfolio"
+          />
+          <div
+            class="cadastro-form__error"
+            *ngIf="
+              perfilForm.get('portfolio')?.invalid &&
+              perfilForm.get('portfolio')?.touched
+            "
+          >
+            URL inválida. Inclua http:// ou https://
+          </div>
+        </div>
+
+        <div class="cadastro-form__field">
+          <label for="linkedin" class="cadastro-form__label">Linkedin</label
+          ><input
+            type="url"
+            id="linkedin"
+            class="cadastro-form__input"
+            formControlName="linkedin"
+          />
+          <div
+            class="cadastro-form__error"
+            *ngIf="
+              perfilForm.get('linkedin')?.invalid &&
+              perfilForm.get('linkedin')?.touched
+            "
+          >
+            URL do linkedin inválida
           </div>
         </div>
 

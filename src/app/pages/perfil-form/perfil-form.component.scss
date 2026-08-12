@@ -4,6 +4,12 @@
   min-height: 100vh;
   padding: 2rem;
 
+  &__divider {
+    width: 100%;
+    border: 1px dashed rgb(21, 172, 206);
+    margin: 2em 0;
+  }
+
   &__container {
     width: 100%;
     max-width: 600px;
@@ -195,7 +201,19 @@
   }
 
   &__add-button {
-    margin-top: 0.5rem;
+    display: flex;
+    justify-content: center;
+    margin-top: 1.5rem;
+
+    button {
+      cursor: pointer;
+      padding: 1em;
+      border-radius: 0.5em;
+      min-width: 35%;
+      font-weight: 500;
+      font-size: 16px;
+      color: #373737;
+    }
   }
 
   &__actions {

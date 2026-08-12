@@ -14,17 +14,25 @@ import { ChipComponent } from '../../shared/components/chip/chip.component';
 import { Router } from '@angular/router';
 import { CadastroService } from '../../shared/services/cadastro-service';
 import { Idioma } from '../../shared/models/idioma.interface';
+import { NgIcon } from '@ng-icons/core';
 
 @Component({
   selector: 'app-perfil-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, ButtonComponent, ChipComponent],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    ButtonComponent,
+    ChipComponent,
+    NgIcon,
+  ],
   templateUrl: './perfil-form.component.html',
   styleUrls: ['./perfil-form.component.scss'],
 })
 export class PerfilFormComponent implements OnInit {
   perfilForm!: FormGroup;
   fotoPreview!: string | ArrayBuffer | null;
+  caracteresRestantes: number = 70;
 
   habilidades: Habilidade[] = [
     { nome: 'Fullstack', selecionada: false },
@@ -58,6 +66,9 @@ export class PerfilFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.inicializarFormulario();
+    this.perfilForm.get('resumo')?.valueChanges.subscribe((resumo) => {
+      this.caracteresRestantes = 70 - resumo.length;
+    });
   }
 
   onAnterior(): void {
@@ -117,11 +128,11 @@ export class PerfilFormComponent implements OnInit {
   private inicializarFormulario() {
     this.perfilForm = this.formBuilder.group({
       foto: [''],
-      resumo: [''],
+      resumo: ['', [Validators.required, Validators.maxLength(70)]],
       habilidadesSelecionadas: [[]],
       idiomas: this.formBuilder.array([]),
-      portfolio: [''],
-      linkedin: [''],
+      portfolio: ['', Validators.pattern('https?://.+')],
+      linkedin: ['', Validators.pattern('https?://(www\\.)?linkedin\\.com/.+')],
     });
 
     this.adicionarIdioma('Português', 'Nativo');
