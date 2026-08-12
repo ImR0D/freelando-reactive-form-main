@@ -14,8 +14,8 @@ export function emailExistenteValidator(
       return of(null);
     }
 
-    return of(emailService.verificarEmailExistente(control.value)).pipe(
-      map((hasEmail) => (hasEmail ? { emailExistente: true } : null)),
-    );
+    return emailService
+      .verificarEmailExistente(control.value)
+      .pipe(map((hasEmail) => (hasEmail ? { emailExistente: true } : null)));
   };
 }

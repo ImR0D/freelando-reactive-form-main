@@ -15,8 +15,8 @@ export class EmailValidatorService {
   ];
 
   verificarEmailExistente(email: string): Observable<boolean> {
-    return of(this.emailsCadastrados.includes(email.toLocaleLowerCase())).pipe(
-      delay(1500),
+    return of(this.emailsCadastrados.includes(email.toLowerCase())).pipe(
+      delay(200),
     );
   }
 }
