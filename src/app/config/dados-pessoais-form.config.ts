@@ -6,7 +6,11 @@ import { emailExistenteValidator } from '../shared/validators/emailExistente.val
 export function getDadosPessoaisConfig(emailService: any): FormConfig {
   return {
     title: 'CRIE SEU CADASTRO',
-    description: 'CRIE SEU PERFIL GRATUITAMENTE PARA TRABALHAR COMO FREELANCE',
+    description: `
+      Crie seu perfil gratuitamente para começar a trabalhar com os melhores
+      freelancers. Em seguida, você poderá dar mais detalhes sobre suas
+      demandas e sobre sua forma de trabalho.
+    `,
     fields: [
       {
         label: 'Nome completo',
@@ -24,11 +28,13 @@ export function getDadosPessoaisConfig(emailService: any): FormConfig {
         formControlName: 'cpf',
         type: 'text',
         required: true,
+        maxLength: 14,
+        placeholder: 'XXX.XXX.XXX-XX',
         errorMessages: {
           maxlength:
             'CPF deve possuir até 14 caracteres (considerando números e separadores)',
           required: 'CPF: campo obrigatório',
-          cpfValidator: 'CPF inválido',
+          cpfInvalido: 'CPF inválido',
         },
         validators: [
           Validators.maxLength(14),
@@ -54,6 +60,7 @@ export function getDadosPessoaisConfig(emailService: any): FormConfig {
         formControlName: 'cidade',
         type: 'select',
         required: true,
+        placeholder: 'Selecione',
         errorMessages: {
           required: 'Cidade: campo obrigatório',
         },
@@ -65,6 +72,7 @@ export function getDadosPessoaisConfig(emailService: any): FormConfig {
         formControlName: 'email',
         type: 'email',
         required: true,
+        placeholder: 'email@example.com',
         errorMessages: {
           required: 'E-mail: campo obrigatório',
           email: 'E-mail inválido',

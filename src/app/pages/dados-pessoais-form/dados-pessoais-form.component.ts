@@ -1,4 +1,4 @@
-import { Component, effect, inject, OnInit } from '@angular/core';
+import { Component, effect, inject, OnInit, Signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   AbstractControl,
@@ -8,7 +8,6 @@ import {
   ReactiveFormsModule,
   ValidationErrors,
   ValidatorFn,
-  Validators,
 } from '@angular/forms';
 import { ButtonComponent } from '../../shared/components/button/button.component';
 import { CadastroService } from '../../shared/services/cadastro-service';
@@ -16,9 +15,14 @@ import { Router } from '@angular/router';
 import { Estado, EstadosService } from '../../shared/services/estados-service';
 import { Cidade, CidadesService } from '../../shared/services/cidades-service';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { cpfValidator } from '../../shared/validators/cpf.validator';
-import { emailExistenteValidator } from '../../shared/validators/emailExistente.validator';
 import { EmailValidatorService } from '../../shared/services/email-validator.service';
+import { FormConfig } from '../../shared/models/form-config.interface';
+import { DynamicFormService } from '../../shared/services/dynamic-form.service';
+import { getDadosPessoaisConfig } from '../../config/dados-pessoais-form.config';
+import {
+  FormFieldBase,
+  FormFieldType,
+} from '../../shared/models/form-field-base.interface';
 
 export const equalPasswordsValidator: ValidatorFn = (
   control: AbstractControl,
@@ -48,13 +52,16 @@ export const equalPasswordsValidator: ValidatorFn = (
   templateUrl: './dados-pessoais-form.component.html',
   styleUrls: ['./dados-pessoais-form.component.scss'],
 })
-export class DadosPessoaisFormComponent {
+export class DadosPessoaisFormComponent implements OnInit {
   private formBuilder = inject(FormBuilder);
   private router = inject(Router);
   private estadosService = inject(EstadosService);
   private cidadesService = inject(CidadesService);
   private cadastroService = inject(CadastroService);
-  private emailService = inject(EmailValidatorService);
+
+  private dynamicFormService = inject(DynamicFormService);
+
+  formConfig!: FormConfig;
 
   estados: Estado[] = [];
   cidades: Cidade[] = [];
@@ -63,74 +70,79 @@ export class DadosPessoaisFormComponent {
     validators: equalPasswordsValidator,
   };
 
-  public dadosPessoaisForm: FormGroup = this.formBuilder.group(
-    {
-      nomeCompleto: ['', Validators.required],
-      cpf: ['', [Validators.maxLength(14), Validators.required, cpfValidator]],
-      estado: ['', Validators.required],
-      cidade: ['', Validators.required],
-      email: [
-        '',
-        [Validators.required, Validators.email],
-        [emailExistenteValidator(this.emailService)],
-      ],
-      senha: ['', [Validators.required, Validators.minLength(6)]],
-      confirmarSenha: ['', Validators.required],
-    },
-    this.formOptions,
-  );
-
-  private estadoSelecionado = toSignal(
-    this.dadosPessoaisForm.get('estado')!.valueChanges,
-    {
-      initialValue: '',
-    },
-  );
-
-  private cidadeSelecionada = toSignal(
-    this.dadosPessoaisForm.get('cidade')!.valueChanges,
-    {
-      initialValue: '',
-    },
-  );
+  public dadosPessoaisForm!: FormGroup;
+  private estadoSelecionado!: Signal<any>;
+  private cidadeSelecionada!: Signal<any>;
 
   private atualizarCampoEstado(UF: string): void {
     this.dadosPessoaisForm.get('estado')?.patchValue(UF, { emitEvent: false });
   }
 
-  constructor() {
-    this.loadEstados();
-    this.loadMunicipios();
+  constructor(private emailService: EmailValidatorService) {
+    this.dynamicFormService.registerFormConfig('dadosPessoaisForm', () =>
+      getDadosPessoaisConfig(this.emailService),
+    );
+
+    this.formConfig =
+      this.dynamicFormService.getFormConfig('dadosPessoaisForm');
+
+    this.dadosPessoaisForm = this.dynamicFormService.createFormGroup(
+      this.formConfig,
+      this.formOptions,
+    );
+
+    this.cidadeSelecionada = toSignal(
+      this.dadosPessoaisForm.get('estado')!.valueChanges,
+      {
+        initialValue: '',
+      },
+    );
+
+    this.estadoSelecionado = toSignal(
+      this.dadosPessoaisForm.get('estado')!.valueChanges,
+      {
+        initialValue: '',
+      },
+    );
 
     effect(() => {
-      let UF = this.estadoSelecionado() ?? null;
-      this.loadMunicipios(UF);
+      try {
+        let UF = this.estadoSelecionado() ?? null;
+        this.loadMunicipios(UF);
+      } catch {}
     });
 
     effect(() => {
-      const nomeCidade = this.cidadeSelecionada();
-      const selecteddUF = this.estadoSelecionado();
+      try {
+        const nomeCidade = this.cidadeSelecionada();
+        const selecteddUF = this.estadoSelecionado();
 
-      if (nomeCidade && !selecteddUF) {
-        const cidadeObj = this.cidades.find((c) => c.nome === nomeCidade);
+        if (nomeCidade && !selecteddUF) {
+          const cidadeObj = this.cidades.find((c) => c.nome === nomeCidade);
 
-        if (cidadeObj) {
-          const ufEncontrada = cidadeObj.microrregiao?.mesorregiao?.UF?.sigla;
+          if (cidadeObj) {
+            const ufEncontrada = cidadeObj.microrregiao?.mesorregiao?.UF?.sigla;
 
-          if (ufEncontrada) {
-            this.atualizarCampoEstado(ufEncontrada);
-          } else {
-            this.cidadesService.getUFPorMunicipio(cidadeObj.id).subscribe({
-              next: (uf) => {
-                if (uf) {
-                  this.atualizarCampoEstado(uf);
-                }
-              },
-            });
+            if (ufEncontrada) {
+              this.atualizarCampoEstado(ufEncontrada);
+            } else {
+              this.cidadesService.getUFPorMunicipio(cidadeObj.id).subscribe({
+                next: (uf) => {
+                  if (uf) {
+                    this.atualizarCampoEstado(uf);
+                  }
+                },
+              });
+            }
           }
         }
-      }
+      } catch {}
     });
+  }
+
+  ngOnInit(): void {
+    this.loadEstados();
+    this.loadMunicipios();
   }
 
   onAnterior(): void {
@@ -146,6 +158,21 @@ export class DadosPessoaisFormComponent {
 
     this.salvarDadosAtuais();
     this.router.navigate(['/cadastro/perfil']);
+  }
+
+  isFieldType(field: FormFieldBase, type: FormFieldType): boolean {
+    return field.type === type;
+  }
+  hasField(name: string): boolean {
+    return this.formConfig.fields.some(
+      (field) => field.formControlName === name,
+    );
+  }
+  getFieldByName(name: string): FormFieldBase {
+    return (
+      this.formConfig.fields.find((field) => field.formControlName === name) ||
+      ({} as FormFieldBase)
+    );
   }
 
   loadEstados() {
